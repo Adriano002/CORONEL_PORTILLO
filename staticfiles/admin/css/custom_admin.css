@@ -1,0 +1,30 @@
+.button,
+.submit-row input {
+    background-color: #28a745 !important;
+    color: white !important;
+    border: none !important;
+    padding: 10px 15px !important;
+    border-radius: 8px !important;
+    font-size: 16px !important;
+    font-weight: bold;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.button:hover,
+.submit-row input:hover {
+    background-color: #218838 !important;
+}
+
+.object-tools a {
+    background-color: #007bff !important;
+    color: white !important;
+    padding: 8px 12px !important;
+    border-radius: 6px !important;
+    font-size: 14px !important;
+    text-decoration: none !important;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.object-tools a:hover {
+    background-color: #0056b3 !important;
+}

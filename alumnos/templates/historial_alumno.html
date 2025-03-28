@@ -1,0 +1,15 @@
+<h2>Historial de {{ estudiante.nombre }}</h2>
+
+{% if reportes %}
+<ul>
+    {% for reporte in reportes %}
+    <li>
+        <a href="{% url 'detalle_reporte' reporte.pk %}">
+            {{ reporte.fecha_reporte }} - Ver Reporte
+        </a>
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>No hay reportes registrados para este estudiante.</p>
+{% endif %}

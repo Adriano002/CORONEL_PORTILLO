@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Detalle del Reporte</h2>
+<p><strong>Fecha del Reporte:</strong> {{ reporte.fecha_reporte }}</p>
+<p><strong>Estudiante:</strong> {{ reporte.estudiante }}</p>
+<p><strong>Condición:</strong> {{ reporte.condicion }}</p>
+<p><strong>Padre:</strong> {{ reporte.padre }}</p>
+<p><strong>Madre:</strong> {{ reporte.madre }}</p>
+<p><strong>Apoderado:</strong> {{ reporte.apoderado }}</p>
+<p><strong>Acción Tomada:</strong> {{ reporte.accion_respuesta }}</p>
+<p><strong>Observación:</strong> {{ reporte.observacion }}</p>
+<a href="{% url 'reporte-lista' %}" class="btn btn-primary">Volver a la lista</a>
+{% endblock %}
