@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Lista de Reportes</h2>
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Estudiante</th>
+        <th>Fecha</th>
+        <th>Acciones</th>
+    </tr>
+    {% for reporte in object_list %}
+    <tr>
+        <td>{{ reporte.id }}</td>
+        <td>{{ reporte.estudiante.nombre }}</td>
+        <td>{{ reporte.fecha }}</td>
+        <td>
+            <a href="{% url 'reporte-detalle' reporte.id %}">Ver</a> |
+            <a href="{% url 'reporte-editar' reporte.id %}">Editar</a> |
+            <a href="{% url 'reporte-eliminar' reporte.id %}">Eliminar</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+<a href="{% url 'reporte-crear' %}">Agregar nuevo reporte</a>
+{% endblock %}
+yy

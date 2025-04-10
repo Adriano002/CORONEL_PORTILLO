@@ -1,17 +1,29 @@
 from django.db.models.signals import post_save
+from django.contrib.auth.models import User
 from django.dispatch import receiver
+from django.utils.html import format_html
 from django.contrib import admin
 from .models import (
     AccionRespuesta, Apoderado, Tutor, Estudiante, HistorialAlumno,
-    Madre, Observacion, Padre, ReporteAlumno
+    Madre, Observacion, Padre, ReporteAlumno, JustificacionAsistencia,Notificacion
 )
 
 
 @admin.register(AccionRespuesta)
 class AccionRespuestaAdmin(admin.ModelAdmin):
     # Cambia fecha a get_fecha si es necesario
-    list_display = ('nombre','estudiante')
+    list_display = ('nombre','estudiante','fecha')
     search_fields = ('nombre','estudiante')
+
+@admin.register(Notificacion)
+class NotificacionAdmin(admin.ModelAdmin):
+    list_display = ('mensaje', 'leida', 'fecha')
+
+    def leida(self, obj):
+        # Mostrar si está leída o no
+        return "✅ Leída" if obj.leida else "📩 No leída"
+
+    leida.short_description = "Estado de lectura"
 
 
 @admin.register(Estudiante)
@@ -81,7 +93,7 @@ class ApoderadoAdmin(admin.ModelAdmin):
 
 @admin.register(Observacion)
 class ObservacionAdmin(admin.ModelAdmin):
-    list_display = ('get_estudiante', 'descripcion')
+    list_display = ('get_estudiante', 'descripcion', 'fecha')
     search_fields = ('estudiante__nombre', 'descripcion')
 
     def get_estudiante(self, obj):
@@ -119,6 +131,8 @@ class ReporteAlumnoAdmin(admin.ModelAdmin):
     get_tutor.short_description = "Tutor"
 
 
+
+
 @admin.register(Tutor)
 class TutorAdmin(admin.ModelAdmin):
     list_display = ('nombre', 'apellido', 'grado',
@@ -130,6 +144,21 @@ class TutorAdmin(admin.ModelAdmin):
 
     nombredeseccion.short_description = "Nombre de la Sección"
 
+
+
+@admin.register(JustificacionAsistencia)
+class JustificacionAsistenciaAdmin(admin.ModelAdmin):
+    list_display = ('estudiante', 'fecha', 'descripcion')
+    search_fields = ('estudiante__nombre', 'fecha')
+    list_filter = ('fecha',)
+
+@receiver(post_save, sender=ReporteAlumno)
+def notificar_admin_nuevo_reporte(sender, instance, created, **kwargs):
+    if created:  # Solo cuando se cree un nuevo reporte
+        admins = User.objects.filter(is_superuser=True)  # Obtener admins
+        mensaje = f"Nuevo reporte de {instance.estudiante.nombre}: {instance.condicion}"
+        for admin in admins:
+            Notificacion.objects.create(usuario=admin, mensaje=mensaje)
 
 @receiver(post_save, sender=ReporteAlumno)
 

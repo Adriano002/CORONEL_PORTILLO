@@ -1,4 +1,4 @@
-from .models import HistorialAlumno, Estudiante, ReporteAlumno
+from .models import HistorialAlumno, Estudiante, ReporteAlumno, Notificacion
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
@@ -29,6 +29,12 @@ class ReporteDeleteView(DeleteView):
     model = ReporteAlumno
     template_name = 'reportes/confirmar_eliminar.html'
     success_url = reverse_lazy('reporte-lista')
+
+def marcar_leida(request, notif_id):
+    notificacion = get_object_or_404(Notificacion, id=notif_id)
+    notificacion.leida = True
+    notificacion.save()
+    return redirect('/admin/alumnos/notificacion/')
 
 
 def historial_alumno(request, pk):

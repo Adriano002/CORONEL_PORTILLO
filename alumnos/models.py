@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.timezone import now
+from django.contrib.auth.models import User  
 
 
 class Estudiante(models.Model):
@@ -61,6 +62,7 @@ class Observacion(models.Model):
     estudiante = models.ForeignKey(
         Estudiante, on_delete=models.CASCADE, null=True, blank=True)
     descripcion = models.TextField()
+    fecha = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"Observación de {self.estudiante.nombre if self.estudiante else 'Sin estudiante'}"
@@ -69,9 +71,20 @@ class Observacion(models.Model):
 class AccionRespuesta(models.Model):
     nombre = models.CharField(max_length=255, unique=True)
     estudiante = models.ForeignKey(Estudiante, on_delete=models.CASCADE, null=True, blank=True)
+    fecha = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.nombre}"
+        return f"{self.nombre}- {self.fecha.strftime('%d/%m/%Y %H:%M:%S')}"
+    
+
+class Notificacion(models.Model):
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)  # Admin que verá la notificación
+    mensaje = models.TextField()
+    leida = models.BooleanField(default=False)  # Indica si la notificación fue vista
+    fecha = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{'📩' if not self.leida else '✅'} {self.mensaje} - {self.fecha.strftime('%d/%m/%Y %H:%M:%S')}"
 
 
 class ReporteAlumno(models.Model):
@@ -103,8 +116,8 @@ class ReporteAlumno(models.Model):
         Tutor, on_delete=models.SET_NULL, null=True, blank=True)
     observacion = models.ForeignKey(Observacion, on_delete=models.CASCADE, null=True, blank=True)
     fecha = models.DateTimeField(default=now)
-
     def save(self, *args, **kwargs):
+
         super().save(*args, **kwargs)  # Guarda el reporte primero
 
         if self.padre:
@@ -133,6 +146,14 @@ class ReporteAlumno(models.Model):
 
     def __str__(self):
         return f"Reporte de {self.estudiante} - {self.condicion} - {self.fecha.strftime('%d/%m/%Y %H:%M:%S')}"
+    
+class JustificacionAsistencia(models.Model):
+    estudiante = models.ForeignKey(Estudiante, on_delete=models.CASCADE)
+    fecha = models.DateField()
+    descripcion = models.TextField()
+
+    def __str__(self):
+        return f"{self.estudiante.nombre} - {self.fecha.strftime('%d/%m/%Y')}"
 
 
 class HistorialAlumno(models.Model):
@@ -151,3 +172,7 @@ class HistorialAlumno(models.Model):
 
     def __str__(self):
         return f"Historial de {self.estudiante} - {self.fecha.strftime('%d/%m/%Y %H:%M:%S')}"
+    
+
+
+
